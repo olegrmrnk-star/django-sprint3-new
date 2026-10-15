@@ -1,7 +1,5 @@
 from django.utils import timezone
-
 from django.shortcuts import get_object_or_404
-
 from django.shortcuts import render
 
 from blog.models import Category, Post
@@ -19,6 +17,7 @@ def get_published_posts(category=None):
     base_filters = {
         'is_published': True,
         'pub_date__lte': timezone.now().date(),
+        'category__isnull': False,
         'category__is_published': True,
     }
     # Если нужна конкретная категория, добавляем её к фильтрам
@@ -30,12 +29,10 @@ def get_published_posts(category=None):
 
 def index(request):
     template = 'blog/index.html'
-    post_list = Post.objects.filter(
-        is_published=True,
-        pub_date__lte=timezone.now().date(),
-        category__isnull=False,
-        category__is_published=True,
-    ).select_related('category').order_by('-pub_date')[:POSTS_DISP]
+    post_list = get_published_posts()
+    post_list = post_list.select_related(
+        'category',
+    ).order_by('-pub_date')[:POSTS_DISP]
     context = {'post_list': post_list}
     return render(request, template, context)
 

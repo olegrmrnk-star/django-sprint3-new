@@ -21,6 +21,10 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ('-created-at',)
+
+    def __str__(self):
+        return self.created_at
 
 
 class Category(BaseModel):
@@ -37,6 +41,7 @@ class Category(BaseModel):
     )
 
     class Meta:
+        ordering = ('title',)
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
 
@@ -45,9 +50,13 @@ class Category(BaseModel):
 
 
 class Location(BaseModel):
-    name = models.CharField(max_length=256, verbose_name='Название места')
+    name = models.CharField(
+        max_length=TITLE_LENGTH,
+        verbose_name='Название места',
+    )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
 
